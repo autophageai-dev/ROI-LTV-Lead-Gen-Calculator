@@ -1,0 +1,3087 @@
+
+{%- comment -%}
+
+Autophage Calculator v3k — Floating Live Price Banner (Minimal Edit)
+
+• Live price moved into floating, minimizable banner (starts open)
+
+• Mobile: live price renders as its own full-width section (not floating)
+
+• Kept all styling + functionality; IDs unchanged (liveCPL, liveTotal)
+
+• Right column content now aligned at top (no empty headspace)
+
+• Default volume = 25 (tile + slider + summary primed)
+
+{%- endcomment -%}
+
+
+
+<link 
+href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap"
+rel="stylesheet">
+
+<script
+src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+<style>
+
+/* === ALL STYLES IDENTICAL TO V3J (DO NOT CHANGE) === */
+
+.autophage-v3j
+*{
+box-sizing:border-box; }
+
+.autophage-v3j{
+
+--green:#00ff80;
+--cyan:#00e6e6;
+--blue:#2bd7ff;
+--text:#ffffff;
+--muted:#cfe;
+
+--accent:
+rgb(0,255,128);
+
+--glassA:
+rgba(255,255,255,.10);
+--glassB:
+rgba(255,255,255,.08);
+
+--stroke:
+rgba(43,215,255,.30);
+--radius:18px;
+
+color:var(--text);
+font-family:'Chakra Petch',system-ui,-apple-system,"Segoe
+ UI",Roboto,sans-serif;
+
+background:
+linear-gradient(180deg,
+#000
+0%,
+#001614
+35%,
+rgba(0,245,224,.10)
+100%);
+
+position:relative;
+overflow:hidden;
+padding:86px
+0;
+
+}
+
+.autophage-v3j::after{
+
+content:"";
+position:absolute;
+inset:0;
+pointer-events:none;
+
+background:
+linear-gradient(180deg,
+transparent
+0%,
+rgba(0,245,224,.12)
+45%,
+transparent
+85%);
+
+animation: v3jShimmer
+12s
+ease-in-out
+infinite;
+opacity:.7;
+
+}
+
+@keyframes
+v3jShimmer{ 0%{transform:translateY(-20%)}50%{transform:translateY(10%)}100%{transform:translateY(-20%)}
+ }
+
+.autophage-v3j
+.wrap{
+position:relative;
+z-index:2;
+width:100%;
+max-width:1600px;
+margin:0
+auto;
+padding:0
+5vw; }
+
+
+
+/* Header */
+
+.autophage-v3j
+.head{
+text-align:center;
+margin:0
+auto
+24px; }
+
+.autophage-v3j
+.head
+h1{
+
+margin:0
+0
+10px;
+font-weight:700;
+letter-spacing:.04em;
+font-size:clamp(24px,3.1vw,42px);
+/* 25% smaller */
+
+color:var(--accent);
+
+text-shadow:0
+0
+26px
+rgba(0,255,128,.5),
+0
+0
+42px
+rgba(0,255,128,.35);
+
+position:relative;
+display:inline-block;
+
+}
+
+.autophage-v3j
+.head
+h1::before{
+
+content:"";
+position:absolute;
+inset:-22px
+-80px;
+z-index:-1;
+
+background:
+radial-gradient(420px
+160px at
+50%
+50%,
+rgba(0,255,128,.28),
+transparent
+62%);
+
+filter:blur(14px);
+animation: titlePulse
+4.8s
+ease-in-out
+infinite;
+
+}
+
+@keyframes
+titlePulse{ 0%,100%{transform:scale(1);opacity:.7}
+ 50%{transform:scale(1.05);opacity:1}
+ }
+
+.autophage-v3j
+.head
+p{
+color:var(--muted);
+margin:0
+auto;
+max-width:900px; }
+
+
+
+/* Cards & grid */
+
+.autophage-v3j
+.card{
+
+background:
+linear-gradient(180deg,
+var(--glassA),
+var(--glassB));
+
+border:1px
+solid
+var(--stroke);
+border-radius:var(--radius);
+
+padding:20px;
+backdrop-filter:blur(14px);
+
+box-shadow:0
+30px
+70px
+rgba(0,245,224,.18),
+0
+10px
+24px
+rgba(0,0,0,.55);
+
+transition:border-color
+.2s, box-shadow
+.2s;
+
+}
+
+.autophage-v3j
+.card:hover{
+border-color:var(--accent);
+box-shadow:0
+0
+52px
+rgba(0,245,224,.24),
+inset
+0
+0
+28px
+rgba(0,255,128,.08);
+ }
+
+.autophage-v3j
+h2{
+font-size:18px;
+font-weight:700;
+margin:0
+0
+14px;
+position:relative; }
+
+.autophage-v3j
+h2::after{
+
+content:"";
+position:absolute;
+left:0;
+bottom:-6px;
+width:68px;
+height:2px;
+
+background:linear-gradient(90deg,
+var(--accent),
+transparent);
+opacity:.8;
+
+}
+
+
+
+/* Layout */
+
+.autophage-v3j
+.section{
+margin-top:16px; }
+
+.autophage-v3j
+.dual{
+display:grid;
+gap:16px;
+grid-template-columns:1fr
+1fr; }
+
+@media(max-width:1100px){
+.autophage-v3j
+.dual{
+grid-template-columns:1fr; } }
+
+/* Mobile responsive fixes */
+
+@media(max-width:768px){
+
+.autophage-v3j
+.tip
+.bubble{
+left:auto;
+right:0;
+max-width:calc(100vw - 40px);
+width:280px;
+}
+
+.autophage-v3j
+.card{
+overflow:visible;
+padding:16px;
+}
+
+.autophage-v3j
+.wrap{
+padding:0 4vw;
+}
+
+.autophage-v3j
+.grid2{
+grid-template-columns:1fr;
+gap:8px;
+}
+
+.autophage-v3j
+.kpi{
+flex-wrap:wrap;
+}
+
+.autophage-v3j
+.kpi
+.k{
+font-size:11px;
+}
+
+.autophage-v3j
+.kpi
+.v{
+font-size:14px;
+}
+
+.autophage-v3j
+.roi-big{
+font-size:18px;
+}
+
+}
+
+
+
+/* Fields */
+
+.autophage-v3j
+.row{
+margin-bottom:14px; }
+
+.autophage-v3j
+label{
+display:flex;
+align-items:center;
+gap:8px;
+color:#eafff9;
+font-weight:700;
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:.06em;
+margin-bottom:6px; }
+
+.autophage-v3j
+.input,
+.autophage-v3j
+.select{
+
+width:100%;
+background:rgba(0,0,0,.28);
+color:var(--text);
+
+border:1px
+solid
+rgba(43,215,255,.38);
+border-radius:12px;
+padding:12px
+14px;
+font-size:14px;
+outline:none;
+
+box-shadow:
+inset
+0
+0
+0
+1px
+rgba(255,255,255,.03);
+transition:border-color
+.2s, box-shadow
+.2s;
+
+}
+
+.autophage-v3j
+.input:focus,
+.autophage-v3j
+.select:focus{
+border-color:var(--accent);
+box-shadow:0
+0
+0
+4px
+rgba(0,255,128,.22);
+ }
+
+.autophage-v3j
+input[type=number]::-webkit-outer-spin-button,
+
+.autophage-v3j
+input[type=number]::-webkit-inner-spin-button{
+-webkit-appearance:none;
+margin:0; }
+
+.autophage-v3j
+input[type=number]{
+-moz-appearance:textfield; }
+
+
+
+/* Tooltips (top layer) */
+
+.autophage-v3j
+.tip{
+z-index:999999;
+display:grid;
+place-items:center;
+width:18px;
+height:18px;
+border-radius:50%;
+color:#053;
+font-weight:900;
+font-size:11px;
+background:linear-gradient(180deg,#e6fffb,#a5fff0);
+position:relative;
+box-shadow:0
+0
+14px
+rgba(43,215,255,.28);
+cursor:default; }
+
+.autophage-v3j
+.tip
+.bubble{
+
+z-index:1000000;
+position:absolute;
+left:0;
+top:26px;
+transform-origin:top
+left;
+transform:scale(.96);
+opacity:0;
+pointer-events:none;
+
+background:rgba(2,10,8,.98);
+color:#eafff8;
+border:1px
+solid
+rgba(43,215,255,.38);
+border-radius:12px;
+padding:10px
+12px;
+width:max(240px,
+42ch);
+font-size:12px;
+line-height:1.45;
+box-shadow:0
+14px
+40px
+rgba(0,0,0,.55);
+transition:border-color
+.2s, box-shadow
+.2s, opacity
+.15s, transform
+.15s;
+
+}
+
+.autophage-v3j
+.tip:hover
+.bubble{
+opacity:1;
+transform:scale(1);
+border-color:var(--accent);
+box-shadow:0
+0
+0
+2px
+rgba(0,255,128,.12),
+0
+14px
+40px
+rgba(0,255,128,.20);
+ }
+
+
+
+/* Sliders (full width, glass) */
+
+.autophage-v3j
+.slider{
+width:100%;
+margin-left:8px; }
+
+.autophage-v3j
+.slider
+input[type=range]{
+
+appearance:none;
+width:100%;
+height:14px;
+border-radius:999px;
+
+background:rgba(0,0,0,.60);
+outline:none;
+
+box-shadow:
+inset
+0
+0
+12px
+rgba(0,0,0,.6),
+0
+0
+14px
+rgba(0,245,224,.20);
+
+border:1px
+solid
+rgba(43,215,255,.35);
+
+}
+
+.autophage-v3j
+.slider
+input[type=range]::-webkit-slider-thumb{
+
+appearance:none;
+width:26px;
+height:26px;
+border-radius:50%;
+
+background:
+radial-gradient(circle,
+var(--cyan)
+0%,
+var(--green)
+70%);
+
+border:1px
+solid
+rgba(0,0,0,.55);
+
+box-shadow:0
+0
+18px
+rgba(43,215,255,.45),
+0
+0
+8px
+rgba(0,255,128,.35)
+inset;
+transition:transform
+.15s;
+
+}
+
+.autophage-v3j
+.slider
+input[type=range]::-webkit-slider-thumb:hover{
+transform:scale(1.07);
+ }
+
+.autophage-v3j
+.slider
+.val{
+
+margin-top:6px;
+font-weight:900;
+font-size:20px;
+color:var(--green);
+text-shadow:0
+0
+12px
+rgba(0,255,128,.35);
+
+display:flex;
+align-items:center;
+gap:10px;
+
+}
+
+.autophage-v3j
+.slider
+.val::after{
+content:"";
+flex:1;
+height:3px;
+border-radius:999px;
+background:linear-gradient(90deg,
+var(--green),
+transparent);
+opacity:.65; }
+
+
+
+/* Tiles */
+
+.autophage-v3j
+.tiles{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin-top:6px;
+margin-left:8px; }
+
+.autophage-v3j
+.tile{
+
+text-align:center;
+padding:14px
+10px;
+border:1px
+solid
+rgba(43,215,255,.5);
+
+border-radius:12px;
+cursor:pointer;
+background:rgba(0,255,128,.07);
+transition:.2s;
+
+}
+
+.autophage-v3j
+.tile:hover{
+transform:translateY(-2px);
+box-shadow:0
+0
+22px
+rgba(0,255,128,.3);
+ }
+
+.autophage-v3j
+.tile.active{
+
+background:
+linear-gradient(135deg,
+var(--green),
+var(--cyan));
+
+color:#000;
+border-color:var(--cyan);
+box-shadow:0
+0
+28px
+rgba(0,255,128,.6),
+inset
+0
+0
+16px
+rgba(255,255,255,.25);
+
+}
+
+.autophage-v3j
+.tile
+.t-num{
+font-size:18px;
+font-weight:900;
+display:block; }
+
+
+
+/* Vol-summary bar */
+
+.autophage-v3j
+.vol-bar{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin-top:10px;
+margin-left:8px; }
+
+.autophage-v3j
+.vol-bar
+.mini{
+font-size:10px;
+color:#cfe;
+text-transform:uppercase;
+opacity:.8; }
+
+.autophage-v3j
+.vol-bar
+.val{
+font-weight:900; }
+
+
+
+/* Right card container (unchanged) */
+
+.autophage-v3j
+.right-card{
+position:relative; }
+
+
+
+/* === NEW: Floating Live Price Banner (replaces in-card badge) === */
+
+.autophage-v3j
+.live-float{
+
+position:fixed;
+right:24px;
+bottom:24px;
+z-index:9990;
+
+display:flex;
+align-items:center;
+gap:12px;
+
+padding:12px
+14px;
+border-radius:14px;
+backdrop-filter:
+blur(10px);
+
+background:rgba(0,0,0,.45);
+border:1px
+solid
+rgba(0,255,128,.65);
+
+box-shadow:0
+0
+26px
+rgba(0,255,128,.28),
+inset
+0
+0
+14px
+rgba(0,255,128,.12);
+
+transition: transform
+.22s
+ease, box-shadow
+.22s
+ease, opacity
+.2s
+ease;
+
+}
+
+.autophage-v3j
+.live-float:hover{
+transform:translateY(-4px);
+box-shadow:0
+0
+36px
+rgba(0,255,128,.38),
+inset
+0
+0
+16px
+rgba(0,255,128,.16);
+ }
+
+.autophage-v3j
+.live-float
+.live-head{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:11px;
+letter-spacing:.06em;
+text-transform:uppercase;
+color:#eafff9; }
+
+.autophage-v3j
+.live-float
+.dot-live{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#ff3b3b;
+box-shadow:0
+0
+8px
+rgba(255,0,0,.85);
+animation:pulseLive
+1.5s
+ease-in-out
+infinite; }
+
+@keyframes
+pulseLive{ 0%,100%{
+transform:scale(1);
+opacity:.9 } 50%{
+transform:scale(1.2);
+opacity:1 } }
+
+.autophage-v3j
+.live-float
+.live-val{
+font-weight:900;
+font-size:16px;
+color:var(--green);
+text-shadow:0
+0
+14px
+rgba(0,255,128,.35);
+ }
+
+.autophage-v3j
+.live-float
+.live-sub{
+font-size:12px;
+color:var(--muted);
+ }
+
+.autophage-v3j
+.live-float
+.countup{
+display:inline-block;
+will-change:transform,opacity;
+animation:tickUp
+.6s
+cubic-bezier(.17,.67,.35,1)
+both; }
+
+.autophage-v3j
+.live-float
+.min-btn{
+
+margin-left:6px;
+border:1px
+solid
+rgba(43,215,255,.45);
+color:#eafff9;
+background:rgba(0,0,0,.25);
+
+border-radius:10px;
+padding:6px
+8px;
+cursor:pointer;
+font-size:11px;
+
+}
+
+
+
+/* Minimized pill state */
+
+.autophage-v3j
+.live-float.min
+.live-sub{
+display:none; }
+
+.autophage-v3j
+.live-float.min
+.live-head
+span{
+display:none; }
+/* keep dot only */
+
+.autophage-v3j
+.live-float.min{
+gap:8px;
+padding:10px
+12px; }
+
+
+
+/* Mobile: full-width section (not fixed) */
+
+@media(max-width:1100px){
+
+.autophage-v3j
+.live-float{
+
+position:static;
+width:100%;
+margin:0
+0
+12px
+0;
+right:auto;
+bottom:auto;
+
+justify-content:space-between;
+
+}
+
+}
+
+
+
+/* Charts */
+
+.autophage-v3j
+.charts{
+display:grid;
+grid-template-columns:1fr
+1fr;
+gap:16px;
+margin-top:12px; }
+
+@media(max-width:1100px){
+.autophage-v3j
+.charts{
+grid-template-columns:1fr; } }
+
+.autophage-v3j
+.chart-card{
+
+background:
+linear-gradient(180deg,
+var(--glassA),
+var(--glassB));
+
+border:1px
+solid
+var(--stroke);
+border-radius:14px;
+padding:12px;
+backdrop-filter:
+blur(12px);
+
+min-height:340px;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow:hidden;
+
+}
+
+.autophage-v3j
+.chart-card
+canvas{
+width:100%
+!important;
+height:300px
+!important; }
+
+.autophage-v3j
+.chart-empty{
+
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#bfffe9;
+font-size:13px;
+
+background:
+repeating-linear-gradient(0deg,
+rgba(255,255,255,.06)
+0
+1px,
+transparent
+1px
+12px),
+
+repeating-linear-gradient(90deg,
+rgba(255,255,255,.06)
+0
+1px,
+transparent
+1px
+12px);
+
+pointer-events:none;
+
+}
+
+
+
+/* Results + Lock band */
+
+.autophage-v3j
+.convert-band{
+
+margin-top:16px;
+padding:16px;
+border-radius:16px;
+
+background:
+
+radial-gradient(800px
+220px at
+25%
+40%,
+rgba(0,255,128,.22),
+transparent
+60%),
+
+radial-gradient(800px
+220px at
+75%
+60%,
+rgba(43,215,255,.24),
+transparent
+60%);
+
+}
+
+.autophage-v3j
+.convert-band
+.dual{
+align-items:stretch; }
+
+
+
+/* Results */
+
+.autophage-v3j
+.panel{
+background:rgba(0,0,0,.24);
+border:1px
+dashed
+rgba(43,215,255,.34);
+border-radius:14px;
+padding:14px; }
+
+.autophage-v3j
+.grid2{
+display:grid;
+grid-template-columns:1fr
+1fr;
+gap:8px
+14px; }
+
+.autophage-v3j
+.kpi{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:8px;
+padding:10px;
+border:1px
+solid
+rgba(43,215,255,.22);
+border-radius:12px; }
+
+.autophage-v3j
+.kpi
+.k{
+color:var(--muted);
+font-size:12px; }
+
+.autophage-v3j
+.kpi
+.v{
+font-weight:900;
+font-size:16px; }
+
+.autophage-v3j
+.is-profit{
+color:var(--green)
+!important;
+text-shadow:0
+0
+18px
+rgba(0,255,128,.35);
+ }
+
+.autophage-v3j
+.roi-big{
+grid-column:1/-1;
+text-align:center;
+font-size:22px;
+font-weight:900;
+margin-top:4px;
+color:var(--green);
+text-shadow:0
+0
+18px
+rgba(0,255,128,.35);
+ }
+
+.autophage-v3j
+.num-tick{
+display:inline-block;
+min-width:3ch;
+will-change:transform,opacity;
+animation:tickUp
+.6s
+cubic-bezier(.17,.67,.35,1)
+both; }
+
+@keyframes
+tickUp{ 0%{transform:translateY(16px);opacity:.2}70%{transform:translateY(-2px);opacity:1}100%{transform:translateY(0);opacity:1}
+ }
+
+.autophage-v3j
+.muted{
+color:var(--muted);
+font-size:12px; }
+
+
+
+/* Lock Deal (unchanged visuals) */
+
+.autophage-v3j
+.lock{
+
+background:
+linear-gradient(180deg,
+var(--glassA),
+var(--glassB));
+
+border:1px
+solid
+var(--stroke);
+border-radius:14px;
+padding:18px;
+backdrop-filter:
+blur(12px);
+
+position:relative;
+overflow:hidden;
+box-shadow:0
+24px
+60px
+rgba(0,245,224,.18),
+0
+10px
+24px
+rgba(0,0,0,.55);
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+
+}
+
+.autophage-v3j
+.lock
+.lock-head{
+display:flex;
+align-items:center;
+gap:10px;
+justify-content:center;
+margin-bottom:8px;
+font-weight:900;
+letter-spacing:.04em;
+text-transform:uppercase;
+flex-wrap:wrap; }
+
+.autophage-v3j
+.lock
+.badge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+font-size:12px;
+font-weight:900;
+padding:8px
+12px;
+border-radius:999px;
+color:#042;
+background:linear-gradient(135deg,
+var(--green),
+var(--cyan));
+box-shadow:0
+0
+24px
+rgba(0,255,128,.38);
+ }
+
+.autophage-v3j
+.lock
+.timer{
+font-size:12px;
+color:#ffd966;
+padding:4px
+10px;
+border:1px
+solid
+#ffd966;
+border-radius:999px;
+background:rgba(255,217,102,.08);
+ }
+
+.autophage-v3j
+.trust{
+text-align:center;
+margin-top:8px;
+color:var(--muted);
+font-size:12px; }
+
+.autophage-v3j
+.trust
+strong{
+color:var(--green);
+ }
+
+.autophage-v3j
+.holo-wrap{
+display:flex;
+align-items:center;
+justify-content:center;
+margin:10px
+0; }
+
+.autophage-v3j
+.holo{
+width:116px;
+height:116px;
+border-radius:50%;
+position:relative;
+perspective:800px; }
+
+.autophage-v3j
+.holo::before,
+.autophage-v3j
+.holo::after{
+
+content:"";
+position:absolute;
+inset:0;
+border-radius:50%;
+
+border:2px
+solid
+var(--cyan);
+box-shadow:0
+0
+24px
+var(--cyan),
+inset
+0
+0
+24px
+var(--cyan);
+
+animation: spinX
+3.2s
+linear
+infinite;
+transform-origin:center;
+opacity:.9;
+
+}
+
+.autophage-v3j
+.holo::after{
+border-color:var(--green);
+box-shadow:0
+0
+24px
+var(--green),
+inset
+0
+0
+24px
+var(--green);
+animation-duration:2.4s;
+animation-direction:reverse; }
+
+@keyframes
+spinX{ 0%{
+transform:rotateX(0deg);
+ } 100%{ transform:rotateX(360deg);
+ } }
+
+.autophage-v3j
+.padlock{
+position:absolute;
+inset:0;
+display:grid;
+place-items:center;
+pointer-events:none;
+
+filter:
+drop-shadow(0
+0
+12px
+rgba(0,255,128,.55))
+drop-shadow(0
+0
+18px
+rgba(0,230,230,.35));
+
+animation: lockPulse
+2.2s
+ease-in-out
+infinite; }
+
+@keyframes
+lockPulse{ 0%,100%{
+transform:scale(1);
+opacity:.9 } 50%{
+transform:scale(1.05);
+opacity:1 } }
+
+.autophage-v3j
+.padlock
+svg{
+width:56px;
+height:56px; }
+
+.autophage-v3j
+.padlock
+.outline{
+fill:none;
+stroke:url(#gradLock);
+stroke-width:3;
+stroke-linecap:round;
+stroke-linejoin:round; }
+
+.autophage-v3j
+.padlock
+.keyhole{
+fill:none;
+stroke:url(#gradLock);
+stroke-width:3;
+stroke-linecap:round;
+stroke-linejoin:round; }
+
+
+
+/* Pricing + buttons */
+
+.autophage-v3j
+.price-box{
+display:flex;
+gap:14px;
+align-items:baseline;
+flex-wrap:wrap;
+justify-content:center; }
+
+.autophage-v3j
+.price-was{
+color:#ffd2d2;
+text-decoration:line-through;
+opacity:.8; }
+
+.autophage-v3j
+.price-now{
+font-size:28px;
+font-weight:900;
+background:linear-gradient(180deg,#fff,var(--cyan),var(--green));
+-webkit-background-clip:text;
+background-clip:text;
+color:transparent;
+text-shadow:0
+0
+22px
+rgba(0,255,200,.75);
+ }
+
+.autophage-v3j
+.btn{
+border:none;
+border-radius:12px;
+padding:12px
+14px;
+background:linear-gradient(135deg,
+var(--green),
+var(--cyan));
+color:#042;
+font-weight:900;
+cursor:pointer;
+box-shadow:0
+12px
+28px
+rgba(0,245,224,.25);
+ }
+
+.autophage-v3j
+.btn:disabled{
+opacity:.5;
+cursor:not-allowed; }
+
+.autophage-v3j
+.btn--ghost{
+background:transparent;
+color:var(--text);
+border:1px
+solid
+rgba(43,215,255,.45);
+ }
+
+
+
+/* Email */
+
+.autophage-v3j
+.email-wrap{
+margin-top:20px; }
+
+
+
+/* Count-up reuse */
+
+.autophage-v3j
+.countup2{
+display:inline-block;
+will-change:transform,opacity;
+animation:tickUp
+.6s
+cubic-bezier(.17,.67,.35,1)
+both; }
+
+</style>
+
+
+
+<div 
+class="autophage-v3j">
+
+<div 
+class="wrap">
+
+
+
+<div 
+class="head">
+
+<h1>Autophage ROI + LTV Calculator</h1>
+
+<p>Enter your company details, then set lead quantity & conversion to visualize payoff and lock your custom deal.</p>
+
+</div>
+
+
+
+<!-- INPUTS -->
+
+<div 
+class="dual section">
+
+<!-- LEFT -->
+
+<div 
+class="card">
+
+<h2>Company Information</h2>
+
+
+
+<div 
+class="row">
+
+<label>Company Name</label>
+
+<input 
+id="company" 
+class="input" 
+type="text" 
+placeholder="Your company">
+
+</div>
+
+
+
+<div 
+class="row">
+
+<label>Industry
+
+<span 
+class="tip">?
+
+<span 
+class="bubble">We prefill averages (sale value, margin, close rate, annual spend). Adjust anytime. Click Calculate to update projections.</span>
+
+</span>
+
+</label>
+
+<select 
+id="ind" 
+class="select">
+
+<option 
+value="" 
+selected>— Select —</option>
+
+<option 
+value="technology">Technology</option>
+
+<option 
+value="roofing">Roofing</option><option
+value="solar">Solar</option><option
+value="hvac">HVAC</option>
+
+<option 
+value="plumbing">Plumbing</option><option
+value="landscaping">Landscaping</option><option
+value="pool">Pool Services</option>
+
+<option 
+value="realestate">Real Estate</option><option
+value="insurance">Insurance</option><option
+value="legal">Legal</option>
+
+<option 
+value="coaching">Coaching/Consulting</option><option
+value="dental">Dental</option><option
+value="medspa">Med Spa</option>
+
+<option 
+value="fitness">Fitness</option><option
+value="automotive">Automotive</option><option
+value="other">Other</option>
+
+</select>
+
+</div>
+
+
+
+<div 
+class="row">
+
+<label>Avg. Sale Value ($)
+
+<span 
+class="tip">?
+
+<span 
+class="bubble">Typical revenue per new customer (contract value or average ticket).</span>
+
+</span>
+
+</label>
+
+<input 
+id="sale" 
+class="input" 
+type="number" 
+min="0" 
+step="1" 
+placeholder="e.g., 5000">
+
+</div>
+
+
+
+<div 
+class="row">
+
+<label>Annual Spend per Customer ($)
+
+<span 
+class="tip">?
+
+<span 
+class="bubble">Average total per year (recurring service, maintenance, or subscriptions).</span>
+
+</span>
+
+</label>
+
+<input 
+id="annual" 
+class="input" 
+type="number" 
+min="0" 
+step="1" 
+value="0" 
+placeholder="0">
+
+</div>
+
+
+
+<div 
+class="row">
+
+<label>Customer Retention (Years)</label>
+
+<div 
+class="tiles" 
+id="retTiles">
+
+<div 
+class="tile" 
+data-years="1"><span
+class="t-num">1</span></div>
+
+<div 
+class="tile" 
+data-years="2"><span
+class="t-num">2</span></div>
+
+<div 
+class="tile" 
+data-years="3"><span
+class="t-num">3</span></div>
+
+<div 
+class="tile" 
+data-years="4"><span
+class="t-num">4</span></div>
+
+</div>
+
+<input 
+id="years" 
+type="hidden" 
+value="3">
+
+</div>
+
+</div>
+
+
+
+<!-- RIGHT -->
+
+<div 
+class="card right-card">
+
+<h2>Lead Quantity & Profit Settings</h2>
+
+
+
+<!-- Lead Quantity: tiles + tooltip -->
+
+<div 
+class="row">
+
+<label>Lead Quantity
+
+<span 
+class="tip">i
+
+<span 
+class="bubble">Each lead represents a qualified sales call or appointment ready to convert.</span>
+
+</span>
+
+</label>
+
+<div 
+class="tiles" 
+id="tiles">
+
+<div 
+class="tile" 
+data-vol="25"><span
+class="t-num">25</span></div>
+
+<div 
+class="tile" 
+data-vol="50"><span
+class="t-num">50</span></div>
+
+<div 
+class="tile" 
+data-vol="100"><span
+class="t-num">100</span></div>
+
+<div 
+class="tile" 
+data-vol="250"><span
+class="t-num">250</span></div>
+
+</div>
+
+</div>
+
+
+
+<!-- Lead Quantity slider -->
+
+<div 
+class="row">
+
+<div 
+class="slider">
+
+<input 
+id="volSlider" 
+type="range" 
+min="1" 
+max="500" 
+value="25">
+
+<div 
+class="val"><span
+id="volVal">25 Leads</span></div>
+
+</div>
+
+<div 
+class="vol-bar">
+
+<div><div 
+class="mini">Leads</div><div
+class="val"
+id="vbLeads">25</div></div>
+
+<div><div 
+class="mini">Discount</div><div
+class="val"
+id="vbDisc">0%</div></div>
+
+<div><div 
+class="mini">CPL</div><div
+class="val"
+id="vbCPL">—</div></div>
+
+<div><div 
+class="mini">Total</div><div
+class="val"
+id="vbSpend">—</div></div>
+
+</div>
+
+</div>
+
+
+
+<!-- Conversion slider -->
+
+<div 
+class="row">
+
+<label>Lead Conversion Rate (%)
+
+<span 
+class="tip">i
+
+<span 
+class="bubble">Your forecasted close rate on qualified leads. Example: 2 sales out of 10 leads = 20% conversion.</span>
+
+</span>
+
+</label>
+
+<div 
+class="slider">
+
+<input 
+id="conv" 
+type="range" 
+min="0" 
+max="100" 
+value="0">
+
+<div 
+class="val"><span
+id="convVal">0%</span></div>
+
+</div>
+
+</div>
+
+
+
+<!-- Profit margin slider -->
+
+<div 
+class="row">
+
+<label>Profit Margin (%)
+
+<span 
+class="tip">i
+
+<span 
+class="bubble">Average profit after expenses, as a % of each sale. Example: $500 sale with $400 profit = 80% margin.</span>
+
+</span>
+
+</label>
+
+<div 
+class="slider">
+
+<input 
+id="margin" 
+type="range" 
+min="0" 
+max="100" 
+value="0">
+
+<div 
+class="val"><span
+id="marginVal">0%</span></div>
+
+</div>
+
+</div>
+
+
+
+<button 
+class="btn" 
+id="btnCalc">Calculate</button>
+
+
+
+<!-- (Removed old in-card live badge to eliminate headspace) -->
+
+</div>
+
+</div>
+
+
+
+<!-- VISUALIZATION -->
+
+<div 
+class="section">
+
+<div 
+class="charts">
+
+<div 
+class="chart-card">
+
+<div 
+class="chart-empty" 
+id="emptySpend">Awaiting calculation: Revenue vs. Spend with break-even</div>
+
+<canvas 
+id="chartSpend"></canvas>
+
+</div>
+
+<div 
+class="chart-card">
+
+<div 
+class="chart-empty" 
+id="emptyLtv">Awaiting calculation: LTV (Profit) by Retention</div>
+
+<canvas 
+id="chartLtv"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- NEW: Floating Live Price Banner (starts open; full-width on mobile) -->
+
+<div 
+class="live-float" 
+id="liveFloat" 
+aria-live="polite">
+
+<div 
+class="live-head"><span
+class="dot-live"></span>
+<span>Live Price</span></div>
+
+<div 
+class="live-val">$<span
+id="liveCPL"
+class="countup">0.00</span> / lead</div>
+
+<div 
+class="live-sub">Total $<span
+id="liveTotal"
+class="countup">0.00</span></div>
+
+<button 
+class="min-btn" 
+id="minToggle" 
+type="button">Minimize</button>
+
+</div>
+
+
+
+<!-- RESULTS + LOCK -->
+
+<div 
+class="convert-band">
+
+<div 
+class="dual">
+
+<div 
+class="card">
+
+<h2>Results</h2>
+
+<div 
+class="panel" 
+id="panelResults" 
+style="display:none;">
+
+<div 
+class="grid2">
+
+<div 
+class="kpi"><span
+class="k">Predicted Sales</span><span
+class="v"><span
+class="num-tick"
+id="r_sales">—</span></span></div>
+
+<div 
+class="kpi"><span
+class="k">Revenue</span><span
+class="v is-profit">$<span
+class="num-tick"
+id="r_rev">—</span></span></div>
+
+<div 
+class="kpi"><span
+class="k">Break-even CPL</span><span
+class="v">$<span
+class="num-tick"
+id="r_cpl_be">—</span></span></div>
+
+<div 
+class="kpi"><span
+class="k">Our Lead Cost (CPL)</span><span
+class="v">$<span
+class="num-tick"
+id="r_cpl">—</span></span></div>
+
+<div 
+class="kpi"><span
+class="k">Net Profit</span><span
+class="v is-profit">$<span
+class="num-tick"
+id="r_profit">—</span></span></div>
+
+<div 
+class="kpi"><span
+class="k">ROI</span><span
+class="v"><span
+class="num-tick"
+id="r_roi">—</span>x</span></div>
+
+<div 
+class="roi-big" 
+id="roiBig"><span
+class="num-tick"
+id="roiBigVal">—</span> ROI</div>
+
+</div>
+
+<p 
+class="muted" 
+id="narr" 
+style="margin:10px 0 0;"></p>
+
+</div>
+
+</div>
+
+
+
+<div 
+class="card lock" 
+id="lockPanel" 
+style="display:none;">
+
+<div 
+class="lock-head">
+
+<span 
+class="badge">🔥 25% Discount – New Client Special</span>
+
+<span 
+class="timer">⏳ Offer expires in
+<span 
+id="lockTimer">05:00</span></span>
+
+</div>
+
+<div 
+class="holo-wrap">
+
+<div 
+class="holo">
+
+<div 
+class="padlock">
+
+<svg 
+viewBox="0 0 64 64" 
+aria-hidden="true">
+
+<defs>
+
+<linearGradient 
+id="gradLock" 
+x1="0%" 
+y1="0%" 
+x2="100%" 
+y2="100%">
+
+<stop 
+offset="0%" 
+stop-color="#00e6e6"/>
+
+<stop 
+offset="100%" 
+stop-color="#00ff80"/>
+
+</linearGradient>
+
+</defs>
+
+<path 
+class="outline" 
+d="M22 28v-6a10 10 0 0 1 20 0v6"
+/>
+
+<rect 
+class="outline" 
+x="18" 
+y="28" 
+width="28" 
+height="26" 
+rx="6" 
+ry="6"/>
+
+<circle 
+class="keyhole" 
+cx="32" 
+cy="41" 
+r="4"/>
+
+<path 
+class="keyhole" 
+d="M32 45 v6"/>
+
+</svg>
+
+</div>
+
+</div>
+
+</div>
+
+<div 
+class="price-box">
+
+<span 
+class="price-was">Was $<span
+id="lockWas">0.00</span></span>
+
+<span 
+class="price-now">$<span
+id="lockNow">0.00</span> / lead</span>
+
+</div>
+
+<p 
+class="trust">✅
+<strong>100% Unqualified Lead Replacement</strong></p>
+
+<div 
+style="display:flex; gap:12px; justify-content:center; margin-top:8px;">
+
+<button 
+class="btn" 
+id="btnLock">🔐 Lock This Deal</button>
+
+<button 
+class="btn--ghost btn" 
+id="btnCopyLink">Copy Share Link</button>
+
+</div>
+
+<p 
+class="muted" 
+id="lockNote" 
+style="text-align:center; margin-top:8px;">Your custom token will be generated and applied at checkout.</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- EMAIL -->
+
+<div 
+class="email-wrap">
+
+<div 
+class="card">
+
+<h2>Email My Results</h2>
+
+<p 
+style="margin:6px 0 16px; color:var(--muted);">We’ll send the full breakdown and your share link to your inbox.</p>
+
+{% 
+form 'contact' %}
+
+<div 
+style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+
+<div 
+class="row" 
+style="margin:0;">
+
+<label>Your Name</label>
+
+<input 
+class="input" 
+type="text" 
+name="contact[name]" 
+placeholder="Jane Doe" 
+required>
+
+</div>
+
+<div 
+class="row" 
+style="margin:0;">
+
+<label>Your Email</label>
+
+<input 
+class="input" 
+type="email" 
+name="contact[email]" 
+placeholder="jane@company.com"
+required>
+
+</div>
+
+</div>
+
+<div 
+class="row" 
+style="margin-top:12px;">
+
+<label>Notes / Link</label>
+
+<input 
+class="input" 
+id="emailToken" 
+type="text" 
+name="contact[body]" 
+readonly placeholder="Click Copy Share Link after calculating">
+
+</div>
+
+<input 
+type="hidden" 
+name="contact[tags]" 
+value="Lead Calculator Results">
+
+<input 
+type="hidden" 
+name="contact[subject]" 
+value="Your ROI + LTV Calculator Results">
+
+<button 
+class="btn" 
+type="submit">📧 Send Results</button>
+
+{% 
+endform %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+{% raw %}
+
+(() => {
+
+'use strict';
+
+
+
+/* === PRESETS (kept; conv values within 10–20 where applicable) === */
+
+const PRESETS = {
+
+technology: { sale:500, margin:80, conv:20, annual:1800, years:4 },
+
+roofing: { sale:12000, margin:25, conv:18, annual:300, years:20 },
+
+solar: { sale:18000, margin:22, conv:15, annual:300, years:22 },
+
+hvac: { sale:6500, margin:28, conv:20, annual:480, years:9 },
+
+plumbing: { sale:3500, margin:30, conv:20, annual:400, years:7 },
+
+landscaping: { sale:2500, margin:35, conv:20, annual:900, years:4 },
+
+pool: { sale:8500, margin:27, conv:20, annual:950, years:6 },
+
+realestate: { sale:15000, margin:40, conv:12, annual:0, years:6 },
+
+insurance: { sale:2000, margin:50, conv:10, annual:1150, years:8 },
+
+legal: { sale:8000, margin:45, conv:12, annual:250, years:4 },
+
+coaching: { sale:6000, margin:60, conv:12, annual:1800, years:1 },
+
+dental: { sale:4500, margin:30, conv:20, annual:600, years:12 },
+
+medspa: { sale:3500, margin:35, conv:20, annual:1150, years:3 },
+
+fitness: { sale:1200, margin:55, conv:18, annual:780, years:1 },
+
+automotive: { sale:5500, margin:25, conv:20, annual:600, years:6 },
+
+other: { sale:0, margin:0, conv:0, annual:0, years:1 }
+
+};
+
+
+
+/* === DISCOUNTS === */
+
+function getDiscount(volume){
+
+if (volume >= 250) return { percent: 50, label: '50% Volume Discount' };
+
+if (volume >= 100) return { percent: 40, label: '40% Volume Discount' };
+
+if (volume >= 50) return { percent: 25, label: '25% Volume Discount' };
+
+if (volume >= 25) return { percent: 10, label: '10% Volume Discount' };
+
+return { percent: 0, label: 'Standard Rate' };
+
+}
+
+
+
+/* === DOM === */
+
+const $ = id => document.getElementById(id);
+
+const els = {
+
+tiles: $('tiles'), volSlider: $('volSlider'), volVal: $('volVal'),
+
+vbLeads: $('vbLeads'), vbDisc: $('vbDisc'), vbCPL: $('vbCPL'), vbSpend: $('vbSpend'),
+
+
+
+/* Live price (moved into floating banner; IDs preserved) */
+
+liveCPL: $('liveCPL'), liveTotal: $('liveTotal'),
+
+liveFloat: $('liveFloat'), minToggle: $('minToggle'),
+
+
+
+retTiles: $('retTiles'), years: $('years'),
+
+
+
+company: $('company'), ind: $('ind'), sale: $('sale'),
+
+margin: $('margin'), conv: $('conv'), annual: $('annual'),
+
+marginVal: $('marginVal'), convVal: $('convVal'),
+
+btnCalc: $('btnCalc'),
+
+
+
+panelResults: $('panelResults'),
+
+r_sales: $('r_sales'), r_rev: $('r_rev'), r_cpl_be: $('r_cpl_be'), r_cpl: $('r_cpl'),
+
+r_profit: $('r_profit'), r_roi: $('r_roi'), roiBigVal: $('roiBigVal'), narr: $('narr'),
+
+
+
+chartSpend: $('chartSpend'), chartLtv: $('chartLtv'), emptySpend: $('emptySpend'), emptyLtv: $('emptyLtv'),
+
+
+
+lockPanel: $('lockPanel'), lockWas: $('lockWas'), lockNow: $('lockNow'),
+
+btnLock: $('btnLock'), btnCopyLink: $('btnCopyLink'),
+
+lockTimer: $('lockTimer'),
+
+
+
+emailToken: $('emailToken')
+
+};
+
+
+
+const clamp = (v,min,max)=>Math.min(max, Math.max(min,v));
+
+const fmt = (n, d=2) => (isFinite(n)?Number(n):0).toFixed(d);
+
+
+
+function animateNumber(el, start, end, duration=700, decimals=2){
+
+if (!el) return;
+
+const t0 = performance.now();
+
+const ease = t=>1-Math.pow(1-t,3);
+
+function f(t){
+
+const p = clamp((t - t0)/duration, 0, 1);
+
+const val = start + (end - start) * ease(p);
+
+el.textContent = (decimals===0 ? Math.round(val) : val.toFixed(decimals));
+
+el.classList.remove('countup'); void el.offsetWidth; el.classList.add('countup');
+
+if (p<1) requestAnimationFrame(f);
+
+}
+
+requestAnimationFrame(f);
+
+}
+
+
+
+/* === STATE === */
+
+let calc = {
+
+sale:0, margin:0, conv:0, years:3, annual:0,
+
+profitPerSale:0, cplBE:0, ourCPL:0, predictedSales:0, sRevenue:0, sSpend:0, sProfit:0, sROI:0,
+
+lRevenue:0, lProfit:0, lVPL:0, lROI:0,
+
+volume:25
+
+};
+
+
+
+/* === CHARTS === */
+
+let charts = { spend:null, ltv:null };
+
+function initCharts(){
+
+charts.spend = new Chart(els.chartSpend.getContext('2d'), {
+
+type:'line',
+
+data:{ labels:[], datasets:[
+
+{
+
+label:'Revenue', data:[],
+
+borderColor:'#00e6e6', backgroundColor:'rgba(0,230,230,.18)',
+
+borderWidth:2, tension:.3, fill:true, pointRadius:3, pointBackgroundColor:'#00ff80'
+
+},
+
+{
+
+label:'Break-even (Revenue = Spend)', data:[],
+
+borderColor:'rgba(255,255,255,.35)', borderDash:[6,6], fill:false, tension:0, pointRadius:0
+
+}
+
+]},
+
+options:{
+
+responsive:true, maintainAspectRatio:false,
+
+animation:{ duration:800, easing:'easeOutCubic' },
+
+plugins:{ legend:{ labels:{ color:'#cfe' } }, tooltip:{ mode:'index', intersect:false } },
+
+scales:{
+
+x:{ ticks:{ color:'#cfe' }, grid:{ color:'rgba(255,255,255,.08)' } },
+
+y:{ ticks:{ color:'#cfe' }, grid:{ color:'rgba(255,255,255,.08)' }, beginAtZero:true }
+
+}
+
+}
+
+});
+
+
+
+charts.ltv = new Chart(els.chartLtv.getContext('2d'), {
+
+type:'bar',
+
+data:{ labels:[], datasets:[
+
+{ label:'Lifetime Profit by Year', data:[], backgroundColor:'rgba(0,255,128,.28)', borderColor:'#00ff80', borderWidth:2 }
+
+]},
+
+options:{
+
+responsive:true, maintainAspectRatio:false,
+
+animation:{ duration:800, easing:'easeOutCubic' },
+
+plugins:{ legend:{ labels:{ color:'#cfe' } } },
+
+scales:{
+
+x:{ ticks:{ color:'#cfe' }, grid:{ color:'rgba(255,255,255,.08)' } },
+
+y:{ ticks:{ color:'#cfe' }, grid:{ color:'rgba(255,255,255,.08)' }, beginAtZero:true }
+
+}
+
+}
+
+});
+
+}
+
+initCharts();
+
+
+
+/* === PRESET FILL === */
+
+function applyPreset(key){
+
+const p = PRESETS[key];
+
+if(!p) return;
+
+els.sale.value = p.sale;
+
+els.margin.value = p.margin;
+
+els.conv.value = p.conv;
+
+els.annual.value = p.annual || '';
+
+els.marginVal.textContent = p.margin + '%';
+
+els.convVal.textContent = p.conv + '%';
+
+// Set retention years from preset
+if(p.years) setRetentionYears(p.years);
+
+// Set volume to 25 when preset is selected
+calc.volume = 25;
+
+$('volSlider').value = 25;
+
+$('volVal').textContent = '25 Leads';
+
+(document.querySelectorAll('#tiles .tile')||[]).forEach(t=>t.classList.toggle('active', parseInt(t.dataset.vol,10)===25));
+
+updateVolumeBar();
+
+updateLivePrice();
+
+}
+
+els.ind.addEventListener('change', ()=> applyPreset(els.ind.value));
+
+els.margin.addEventListener('input', ()=> { els.marginVal.textContent = els.margin.value + '%'; updateLivePrice(); });
+
+els.conv.addEventListener('input', ()=> { els.convVal.textContent = els.conv.value + '%'; updateLivePrice(); });
+
+els.sale.addEventListener('input', updateLivePrice);
+
+els.annual.addEventListener('input', updateLivePrice);
+
+
+
+/* === RETENTION TILES === */
+
+function setRetentionYears(y){
+
+calc.years = y;
+
+els.years.value = y;
+
+(els.retTiles.querySelectorAll('.tile')||[]).forEach(t=>{
+
+t.classList.toggle('active', parseInt(t.dataset.years,10)===y);
+
+});
+
+}
+
+els.retTiles?.addEventListener('click', (e)=>{
+
+const tile = e.target.closest('.tile'); if(!tile) return;
+
+setRetentionYears(parseInt(tile.dataset.years,10)||1);
+
+});
+
+
+
+/* === VOLUME UI === */
+
+const tileEls = Array.from(els.tiles?.querySelectorAll('.tile')||[]);
+
+function setTiles(v){ tileEls.forEach(t=>t.classList.toggle('active', parseInt(t.dataset.vol,10)===v)); }
+
+function computeOurCPLFromInputs(){
+
+const sale = parseFloat(els.sale.value) || 0;
+
+const margin = (parseFloat(els.margin.value)||0) / 100;
+
+const conv = (parseFloat(els.conv.value) ||0) / 100;
+
+if (sale<=0 || margin<=0 || conv<=0) return 0;
+
+const profitPerSale = sale * margin;
+
+const cplBreakEven = profitPerSale * conv;
+
+return cplBreakEven * 0.5; // our baseline CPL
+
+}
+
+function updateLockPrices(currentCPL){
+
+const was = calc.ourCPL || 0;
+
+const now = (currentCPL!=null) ? currentCPL : was;
+
+els.lockWas && (els.lockWas.textContent = fmt(was));
+
+els.lockNow && (els.lockNow.textContent = fmt(now));
+
+}
+
+function updateVolumeBar(){
+
+const v = calc.volume||0;
+
+setTiles(v);
+
+els.vbLeads && (els.vbLeads.textContent = v);
+
+const {percent} = getDiscount(v);
+
+els.vbDisc && (els.vbDisc.textContent = percent + '%');
+
+
+
+const base = computeOurCPLFromInputs();
+
+const cpl = base * (1 - percent/100);
+
+els.vbCPL && (els.vbCPL.textContent = base ? '$'+fmt(cpl) : '—');
+
+els.vbSpend && (els.vbSpend.textContent = base ? '$'+fmt(cpl*v) : '—');
+
+
+
+// Floating banner numbers
+
+animateNumber(els.liveCPL, parseFloat(els.liveCPL?.textContent)||0, cpl||0, 400, 2);
+
+animateNumber(els.liveTotal, parseFloat(els.liveTotal?.textContent)||0, (cpl||0) * v, 400, 2);
+
+
+
+if (calc.ourCPL > 0) updateLockPrices(cpl);
+
+}
+
+function updateLivePrice(){
+
+const base = computeOurCPLFromInputs();
+
+const {percent} = getDiscount(calc.volume||0);
+
+const cpl = base * (1 - percent/100);
+
+animateNumber(els.liveCPL, parseFloat(els.liveCPL?.textContent)||0, cpl||0, 400, 2);
+
+animateNumber(els.liveTotal, parseFloat(els.liveTotal?.textContent)||0, (cpl||0) * (calc.volume||0), 400, 2);
+
+els.vbCPL && (els.vbCPL.textContent = base ? '$'+fmt(cpl) : '—');
+
+els.vbSpend && (els.vbSpend.textContent = base ? '$'+fmt(cpl*(calc.volume||0)) : '—');
+
+}
+
+els.volSlider?.addEventListener('input', ()=>{
+
+const v = parseInt(els.volSlider.value,10)||0;
+
+els.volVal && (els.volVal.textContent = v + ' Leads');
+
+calc.volume = v;
+
+updateVolumeBar();
+
+});
+
+els.tiles?.addEventListener('click', (e)=>{
+
+const tile = e.target.closest('.tile'); if(!tile) return;
+
+const v = parseInt(tile.dataset.vol,10)||0;
+
+els.volSlider && (els.volSlider.value = v);
+
+els.volVal && (els.volVal.textContent = v + ' Leads');
+
+calc.volume = v;
+
+updateVolumeBar();
+
+});
+
+
+
+/* === Floating banner minimize toggle (desktop) === */
+
+els.minToggle?.addEventListener('click', ()=>{
+
+els.liveFloat?.classList.toggle('min');
+
+els.minToggle.textContent = els.liveFloat?.classList.contains('min') ? 'Expand' : 'Minimize';
+
+});
+
+
+
+/* === CALCULATE (unchanged core logic from v3k) === */
+
+let countdownTimer = null;
+
+function startCountdown(seconds=300){
+
+clearInterval(countdownTimer);
+
+const end = Date.now() + seconds*1000;
+
+const tick = () => {
+
+const remain = Math.max(0, Math.floor((end - Date.now())/1000));
+
+const m = String(Math.floor(remain/60)).padStart(2,'0');
+
+const s = String(remain%60).padStart(2,'0');
+
+if (els.lockTimer) els.lockTimer.textContent = `${m}:${s}`;
+
+if (remain<=0){
+
+clearInterval(countdownTimer);
+
+if (els.btnLock) { els.btnLock.disabled = true; }
+
+const note = document.getElementById('lockNote');
+
+if (note) note.textContent = 'Offer expired — recalculate to generate a new special.';
+
+}
+
+};
+
+tick();
+
+countdownTimer = setInterval(tick, 300);
+
+}
+
+
+
+function calculate(){
+
+updateVolumeBar();
+
+
+
+const company= (els.company.value||'').trim();
+
+const sale = parseFloat(els.sale.value) || 0;
+
+const margin = (parseFloat(els.margin.value)|| 0)/100;
+
+const conv = (parseFloat(els.conv.value) || 0)/100;
+
+const years = parseFloat(els.years.value) || 1;
+
+const annual = parseFloat(els.annual.value) || 0;
+
+
+
+if (sale<=0){ alert('Please enter a valid Avg. Sale Value.'); return; }
+
+
+
+const leads = calc.volume || parseInt(els.volSlider.value,10) || 25;
+
+const profitPerSale = sale * margin;
+
+const cplBreakEven = profitPerSale * conv;
+
+const baseCPL = cplBreakEven * 0.5;
+
+const { percent } = getDiscount(leads);
+
+const discountedCPL = baseCPL * (1 - percent/100);
+
+
+
+const predictedSales= leads * conv;
+
+const sRevenue = sale * predictedSales;
+
+const sSpend = discountedCPL * leads;
+
+const sProfit = sRevenue - sSpend;
+
+const sROI = sSpend>0 ? sRevenue / sSpend : 0;
+
+
+
+const lRevenue = annual * years;
+
+const lProfit = lRevenue * margin;
+
+const lVPL = lProfit * conv;
+
+const lROI = sSpend>0 ? (lProfit * predictedSales) / sSpend : 0;
+
+
+
+calc = { sale, margin, conv, years, annual,
+
+profitPerSale, cplBE:cplBreakEven, ourCPL:baseCPL,
+
+predictedSales, sRevenue, sSpend, sProfit, sROI,
+
+lRevenue, lProfit, lVPL, lROI,
+
+volume: leads
+
+};
+
+
+
+els.panelResults.style.display = 'block';
+
+els.lockPanel.style.display = 'flex';
+
+els.btnLock.disabled = false;
+
+
+
+animateNumber(els.r_sales, 0, predictedSales, 900, 1);
+
+animateNumber(els.r_rev, 0, sRevenue, 900, 2);
+
+animateNumber(els.r_cpl_be, 0, cplBreakEven, 900, 2);
+
+animateNumber(els.r_cpl, 0, discountedCPL, 900, 2);
+
+animateNumber(els.r_profit, 0, sProfit, 900, 2);
+
+animateNumber(els.r_roi, 0, sROI, 900, 1);
+
+animateNumber(els.roiBigVal,0, sROI, 900, 1);
+
+
+
+const cName = company ? `<strong>${company}</strong> could` : `You could`;
+
+els.narr.innerHTML = `
+
+${cName} expect about <strong>${predictedSales.toFixed(1)} new customers</strong> from a <strong>${leads}-lead campaign</strong> at a
+
+<strong>${(conv*100).toFixed(0)}%</strong> close rate, with an average sale value of <strong>$${sale.toLocaleString()}</strong>.
+
+That’s approximately <strong>$${sRevenue.toFixed(2)}</strong> in revenue for this campaign.
+
+With a <strong>${(margin*100).toFixed(0)}%</strong> profit margin, your break-even CPL is <strong>$${cplBreakEven.toFixed(2)}</strong>.
+
+Based on your selected volume, the discounted CPL is <strong>$${discountedCPL.toFixed(2)}</strong>, producing a short-term ROI of <strong>${sROI.toFixed(1)}x</strong>.
+
+Assuming customers stay <strong>${years}</strong> years and spend <strong>$${annual.toLocaleString()}</strong> per year,
+
+the lifetime profit per customer is ~<strong>$${lProfit.toFixed(2)}</strong>, or <strong>$${lVPL.toFixed(2)}</strong> in value per lead.
+
+`;
+
+
+
+if (els.lockWas) els.lockWas.textContent = fmt(baseCPL);
+
+if (els.lockNow) els.lockNow.textContent = fmt(discountedCPL);
+
+
+
+updateCharts();
+
+startCountdown(300);
+
+
+
+setTimeout(()=>{
+
+const band = document.querySelector('.convert-band');
+
+if (band) {
+
+const y = band.getBoundingClientRect().top + window.scrollY - 180;
+
+window.scrollTo({ top: y, behavior: 'smooth' });
+
+}
+
+}, 120);
+
+}
+
+$('btnCalc')?.addEventListener('click', calculate);
+
+
+
+function updateCharts(){
+
+if(!charts.spend || !charts.ltv) return;
+
+const vols = [10,20,30,40,50,60,70,80,90,100];
+
+const rev = [], spend = [];
+
+vols.forEach(v=>{
+
+const baseCPL = calc.ourCPL || computeOurCPLFromInputs();
+
+const {percent} = getDiscount(v);
+
+const cpl = baseCPL * (1 - percent/100);
+
+const s = cpl * v;
+
+const r = (v * calc.conv) * calc.sale;
+
+spend.push(s); rev.push(r);
+
+});
+
+els.emptySpend.style.display = 'none';
+
+charts.spend.data.labels = spend.map(v=>'$'+fmt(v));
+
+charts.spend.data.datasets[0].data = rev;
+
+charts.spend.data.datasets[1].data = spend;
+
+charts.spend.update();
+
+
+
+const yrs = Math.max(1, Math.round(calc.years));
+
+const labels = Array.from({length: yrs}, (_,i)=> (i+1)+'y');
+
+const bars = labels.map((_,i)=> (calc.annual * (i+1) * calc.margin));
+
+els.emptyLtv.style.display = 'none';
+
+charts.ltv.data.labels = labels;
+
+charts.ltv.data.datasets[0].data = bars;
+
+charts.ltv.update();
+
+}
+
+
+
+/* === LOCK / SHARE (schema synced) === */
+
+function getCurrentDiscountedCPL(){
+
+const {percent} = getDiscount(calc.volume||0);
+
+const base = calc.ourCPL || computeOurCPLFromInputs();
+
+return base * (1 - percent/100);
+
+}
+
+function buildShareURL(){
+
+const params = new URLSearchParams({
+
+company: $('company').value || '',
+
+industry: $('ind').value || '',
+
+sale: $('sale').value || '',
+
+margin: $('margin').value || '',
+
+conv: $('conv').value || '',
+
+years: $('years').value || '',
+
+annual: $('annual').value || '',
+
+volume: calc.volume || ''
+
+});
+
+return `${location.origin}${location.pathname}?${params.toString()}`;
+
+}
+
+function genToken(){
+
+const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+let t = 'RATE-';
+
+for(let i=0;i<6;i++) t += chars[Math.floor(Math.random()*chars.length)];
+
+return t;
+
+}
+
+$('btnLock')?.addEventListener('click', ()=>{
+
+const {percent} = getDiscount(calc.volume||0);
+
+const finalCPL = getCurrentDiscountedCPL();
+
+const totalCost = finalCPL * (calc.volume||0);
+
+const token = genToken();
+
+const deal = {
+
+token,
+
+company: $('company').value || '',
+
+industry: $('ind').value || '',
+
+sale: parseFloat($('sale').value)||0,
+
+margin: parseFloat($('margin').value)||0,
+
+conv: parseFloat($('conv').value)||0,
+
+years: parseFloat($('years').value)||0,
+
+annual: parseFloat($('annual').value)||0,
+
+leads: calc.volume || 0,
+
+discountPercent: percent,
+
+finalCPL: finalCPL,
+
+totalCost: totalCost,
+
+timestamp: Date.now()
+
+};
+
+try{ localStorage.setItem('autophageDeal', JSON.stringify(deal)); } catch(e){}
+
+$('emailToken') && ($('emailToken').value = `Deal ${deal.token} — ${deal.leads} leads @ $${finalCPL.toFixed(2)}/lead (disc ${percent}%).`);
+
+window.location.href = '/pages/deal-checkout?deal_token=' + encodeURIComponent(token);
+
+});
+
+$('btnCopyLink')?.addEventListener('click', async ()=>{
+
+const url = buildShareURL();
+
+try{ await navigator.clipboard.writeText(url); $('lockNote').textContent = 'Share link copied to clipboard.'; }
+
+catch{ $('lockNote').textContent = url; }
+
+$('emailToken') && ($('emailToken').value = url);
+
+});
+
+
+
+/* === INIT (unchanged visuals except defaults) === */
+
+function firstMount(){
+
+// Default to 1 lead (tile + slider + labels) - set BEFORE preset
+calc.volume = 1;
+
+$('volSlider').value = 1;
+
+$('volVal').textContent = '1 Leads';
+
+// Apply preset WITHOUT changing volume
+const p = PRESETS['other'];
+if(p) {
+els.sale.value = p.sale;
+els.margin.value = p.margin;
+els.conv.value = p.conv;
+els.annual.value = p.annual || '';
+els.marginVal.textContent = p.margin + '%';
+els.convVal.textContent = p.conv + '%';
+}
+
+setRetentionYears(1);
+
+// ensure tile highlights
+
+(document.querySelectorAll('#tiles .tile')||[]).forEach(t=>t.classList.toggle('active', parseInt(t.dataset.vol,10)===1));
+
+
+
+updateVolumeBar(); // primes live banner numbers immediately
+
+}
+
+firstMount();
+
+
+
+})();
+
+{% endraw %}
+
+</script>
+
+
+
+{% 
+schema %}
+
+{
+
+"name":
+"Autophage Calculator",
+
+"settings": [
+
+{ "type":
+"header",
+"content":
+"Style" }
+
+],
+
+"presets": [
+
+{ "name":
+"Autophage Calculator v3k (Live Banner)" }
+
+]
+
+}
+
+{% 
+endschema %}
